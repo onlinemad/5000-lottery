@@ -92,9 +92,9 @@
   }
 
   function query () {
-    let uid = document.getElementById('uid').value
-    localStorage.setItem('uid', uid)
-    let uids = uid.split(',')
+    let uids = document.getElementById('uid').value.split(',')
+    uids = uids.map((uid) => uid.trim())
+    localStorage.setItem('uid', uids.toString())
 
     let rs = search(uids, coupons)
 
