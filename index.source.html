@@ -133,7 +133,10 @@
   }
 
   function query() {
-    let uids = document.getElementById('uid').value.split(',')
+    let ele = document.getElementById('uid')
+    ele.style.display = null
+
+    let uids = ele.value.split(',')
     uids = uids.map((uid) => uid.trim())
 
     localStorage.setItem('uid', uids.toString())
@@ -143,6 +146,8 @@
   }
 
   function mask() {
+    let uid = document.getElementById('uid')
+    uid.style.display = 'none'
     render(rs.map((r) => {
       r.id = r.id.replace(/[a-z\d]/gi, '*')
       return r
