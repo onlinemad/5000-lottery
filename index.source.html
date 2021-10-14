@@ -3,29 +3,44 @@
 
 <head>
   <meta charset="utf-8">
+  <title>振興五倍加碼券速查</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>加碼券速查</title>
+  <meta property="og:image" content="https://onlinemad.github.io/5000-lottery/cover.webp" />
   <style type="text/css">
     body {
       width: 25%;
-      margin: auto;
+      margin: auto auto 20pt auto;
     }
-    .main {
-      text-align: center;
-    }
-    .main textarea {
-      width: 95%;
-    }
-    .main button {
+
+    button {
       width: 100%;
       height: 25pt;
     }
+
+    .main {
+      text-align: center;
+    }
+
+    .main textarea {
+      width: 95%;
+      font-size: 20pt;
+    }
+
     .result-title {
       text-align: center;
     }
-    @media only screen 
-    and (min-device-width : 375px) 
-    and (max-device-width : 667px) {
+
+    #result {
+      margin-bottom: 20pt;
+    }
+
+    @media only screen and (max-device-width : 375px) {
+      body {
+        width: 95%;
+      }
+    }
+
+    @media only screen and (min-device-width : 375px) and (max-device-width : 667px) {
       body {
         width: 75%;
       }
@@ -35,9 +50,9 @@
 
 <body onload="loadUid()">
   <div class="main">
-    <h1>加碼券速查</h1>
+    <h1>振興五倍加碼券速查</h1>
     <div>
-      <textarea id="uid" rows="10" placeholder="請輸入身分證字號，用 , 分開多筆"></textarea>
+      <textarea id="uid" rows="5" placeholder="請輸入身分證字號（至少輸入末三碼），用 , 分開多筆"></textarea>
     </div>
     <div>
       <button onclick="query()">查詢</button>
@@ -46,6 +61,9 @@
   <div>
     <h2 class="result-title">查詢結果</h2>
     <div id="result">
+    </div>
+    <div id="mask" style="display: none;">
+      <button onclick="mask()">碼掉身分證字號</button>
     </div>
   </div>
 </body>
@@ -67,6 +85,8 @@
     codes: ['39', '37', '23', '36', '79', '08', '14', '75']
   }]
 
+  let rs = []
+
   let search = (ids, coupons) => {
     let rs = []
     ids.map((id) => {
@@ -86,18 +106,12 @@
     return rs
   }
 
-  function loadUid () {
+  function loadUid() {
     let uid = localStorage.getItem('uid')
     document.getElementById('uid').value = uid
   }
 
-  function query () {
-    let uids = document.getElementById('uid').value.split(',')
-    uids = uids.map((uid) => uid.trim())
-    localStorage.setItem('uid', uids.toString())
-
-    let rs = search(uids, coupons)
-
+  function render(rs) {
     let result = document.getElementById('result')
     result.innerHTML = ''
     rs.map((r) => {
@@ -110,6 +124,26 @@
       span.appendChild(document.createTextNode(winning))
       result.appendChild(span)
     })
+
+    let mask = document.getElementById('mask')
+    mask.style.display = null;
+  }
+
+  function query() {
+    let uids = document.getElementById('uid').value.split(',')
+    uids = uids.map((uid) => uid.trim())
+
+    localStorage.setItem('uid', uids.toString())
+  
+    rs = search(uids, coupons)
+    render(rs)
+  }
+
+  function mask() {
+    render(rs.map((r) => {
+      r.id = r.id.replace(/[a-z\d]/gi, '*')
+      return r
+    }))
   }
 </script>
 
