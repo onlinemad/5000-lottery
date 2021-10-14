@@ -63,7 +63,7 @@
     <div id="result">
     </div>
     <div id="mask" style="display: none;">
-      <button onclick="mask()">碼掉身分證字號</button>
+      <button onclick="mask()">碼掉身分證字號 for 截圖分享</button>
     </div>
   </div>
 </body>
@@ -83,6 +83,9 @@
   }, {
     name: '藝fun券(紙本)',
     codes: ['39', '37', '23', '36', '79', '08', '14', '75']
+  }, {
+    name: '動滋券',
+    codes: ['97', '13', '19', '55', '71', '93', '381', '734', '644', '453', '985']
   }]
 
   let rs = []
@@ -120,7 +123,7 @@
       result.appendChild(h3)
 
       let span = document.createElement('span')
-      let winning = r.winning.length > 0 ? `中：${r.winning.toString()}` : '都沒中'
+      let winning = r.winning.length > 0 ? `中：${r.winning.join(', ')}` : '都沒中'
       span.appendChild(document.createTextNode(winning))
       result.appendChild(span)
     })

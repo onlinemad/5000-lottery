@@ -8,5 +8,6 @@
 * No tracking code 連 Google Analytics 都不裝
 * 支援多組身分證字號（請使用 , 分隔多組身分證字號）
 * 用 localStorage 儲存身分證字號，下次就不用再輸入
+* 一鍵碼掉身分證字號，快速分享 🤣
 * Mobile friendly
-* 極度最小化 1.7K
+* 極度最小化 2.4K
