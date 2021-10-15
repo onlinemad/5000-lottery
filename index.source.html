@@ -15,6 +15,7 @@
     button {
       width: 100%;
       height: 25pt;
+      margin: 3pt 0;
     }
 
     .main {
@@ -62,6 +63,9 @@
     </div>
     <div>
       <button onclick="query()">查詢</button>
+    </div>
+    <div>
+      <button onclick="doClear()">清除</button>
     </div>
   </div>
   <div>
@@ -150,6 +154,7 @@
   function query() {
     let ele = document.getElementById('uid')
     ele.style.display = null
+    document.getElementById('result').style.display = null;
 
     let uids = ele.value.split(',')
     uids = uids.map((uid) => uid.trim())
@@ -167,6 +172,12 @@
       r.id = r.id.replace(/[a-z\d]/gi, '*')
       return r
     }))
+  }
+
+  function doClear() {
+    document.getElementById('uid').value = '';
+    document.getElementById('result').style.display = 'none';
+    localStorage.removeItem('uid');
   }
 </script>
 
