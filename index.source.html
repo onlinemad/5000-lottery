@@ -176,16 +176,16 @@
 
   function validateId(id) {
     id = id.trim()
-    test = id.match("^[A-Z][12]\\d{8}$")
+    let test = id.match("^[A-Z][12]\\d{8}$")
     if (!test) {
       return false
     }
 
     let alpha = "ABCDEFGHJKLMNPQRSTUVXYWZIO"
     let weights = [1, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1]
-    convertedId = String(alpha.indexOf(id[0]) + 10) + id.slice(1)
+    let convertedId = String(alpha.indexOf(id[0]) + 10) + id.slice(1)
 
-    checkSum = 0
+    let checkSum = 0
     for (let i = 0; i < convertedId.length; i++) {
       a = parseInt(convertedId[i])
       w = weights[i]
