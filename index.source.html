@@ -73,7 +73,7 @@
     </div>
   </div>
   <div class="footer">
-    <small>無廣告、無追蹤碼<br/>網站以<a href="https://github.com/onlinemad/5000-lottery" target="_blank">開放原始碼方式釋出</a></small>
+    <small>無廣告、無追蹤碼<br />網站以<a href="https://github.com/onlinemad/5000-lottery" target="_blank">開放原始碼方式釋出</a></small>
   </div>
 </body>
 <script>
@@ -105,17 +105,21 @@
   let search = (ids, coupons) => {
     let rs = []
     ids.map((id) => {
+      console.log(id)
       let winning = []
-      coupons.map((coupon) => {
-        coupon.codes.map((code) => {
-          if (id.slice(-code.length) === code) {
-            winning.push(`${coupon.name}[${code}]`)
-          }
+      if (validateId(id)) {
+        coupons.map((coupon) => {
+          coupon.codes.map((code) => {
+            if (id.slice(-code.length) === code) {
+              winning.push(`${coupon.name}[${code}]`)
+            }
+          })
         })
-      })
+      }
       rs.push({
         id: id,
-        winning: winning
+        winning: winning,
+        valid: validateId(id)
       })
     })
     return rs
@@ -135,8 +139,12 @@
       result.appendChild(h3)
 
       let span = document.createElement('span')
-      let winning = r.winning.length > 0 ? `中：${r.winning.join(', ')}` : '都沒中'
-      span.appendChild(document.createTextNode(winning))
+      if (!r.valid) {
+        span.appendChild(document.createTextNode('身份證字號格式錯誤'))
+      } else {
+        let winning = r.winning.length > 0 ? `中：${r.winning.join(', ')}` : '都沒中'
+        span.appendChild(document.createTextNode(winning))
+      }
       result.appendChild(span)
     })
 
@@ -152,7 +160,7 @@
     uids = uids.map((uid) => uid.trim())
 
     localStorage.setItem('uid', uids.toString())
-  
+
     rs = search(uids, coupons)
     render(rs)
   }
@@ -164,6 +172,27 @@
       r.id = r.id.replace(/[a-z\d]/gi, '*')
       return r
     }))
+  }
+
+  function validateId(id) {
+    id = id.trim()
+    test = id.match("^[A-Z][12]\\d{8}$")
+    if (!test) {
+      return false
+    }
+
+    let alpha = "ABCDEFGHJKLMNPQRSTUVXYWZIO"
+    let weights = [1, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1]
+    convertedId = String(alpha.indexOf(id[0]) + 10) + id.slice(1)
+
+    checkSum = 0
+    for (let i = 0; i < convertedId.length; i++) {
+      a = parseInt(convertedId[i])
+      w = weights[i]
+      checkSum += a * w
+    }
+
+    return checkSum % 10 == 0
   }
 </script>
 
