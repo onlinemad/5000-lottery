@@ -21,6 +21,10 @@
       text-align: center;
     }
 
+    .main small {
+      color: firebrick;
+    }
+
     .main textarea {
       width: 95%;
       font-size: 20pt;
@@ -34,6 +38,7 @@
       color: dimgrey;
       text-align: center;
       margin: 20pt auto;
+      line-height: 18pt;
     }
 
     #result {
@@ -57,10 +62,9 @@
 <body onload="loadUid()">
   <div class="main">
     <h1>振興五倍加碼券速查</h1>
+    <p><small>非官方，加碼券說明請看<a href="https://5000.gov.tw/" target="_blank">振興五倍券官網</a></small></p>
     <div>
       <textarea id="uid" rows="5" placeholder="請輸入身分證字號（至少輸入末三碼），用 , 分開多筆"></textarea>
-    </div>
-    <div>
       <button onclick="query()">查詢</button>
     </div>
   </div>
@@ -73,7 +77,11 @@
     </div>
   </div>
   <div class="footer">
-    <small>無廣告、無追蹤碼<br/>網站以<a href="https://github.com/onlinemad/5000-lottery" target="_blank">開放原始碼方式釋出</a></small>
+    <small>
+      無廣告、無追蹤碼<br />
+      身分證字號暫存在瀏覽器內，你也可以<a href="#" onclick="clean()">清除暫存</a> <br />
+      網站以<a href="https://github.com/onlinemad/5000-lottery" target="_blank">開放原始碼方式釋出</a>
+    </small>
   </div>
 </body>
 <script>
@@ -100,14 +108,13 @@
     codes: ['81', '900']
   }, {
     name: '地方創生券',
-    codes: ['081','105','594','188','089','396','521','467','912','798','358','441','367','941','335']
+    codes: ['081', '105', '594', '188', '089', '396', '521', '467', '912', '798', '358', '441', '367', '941', '335']
   }]
 
   let rs = []
 
   let search = (ids, coupons) => {
-    let rs = []
-    ids.map((id) => {
+    let _rs = ids.map((id) => {
       let winning = []
       coupons.map((coupon) => {
         coupon.codes.map((code) => {
@@ -116,23 +123,25 @@
           }
         })
       })
-      rs.push({
+      return {
         id: id,
         winning: winning
-      })
+      }
     })
-    return rs
+    return _rs
   }
+
+  let uid = null
 
   function loadUid() {
-    let uid = localStorage.getItem('uid')
-    document.getElementById('uid').value = uid
+    uid = document.getElementById('uid')
+    uid.value = localStorage.getItem('uid')
   }
 
-  function render(rs) {
+  function render(_rs) {
     let result = document.getElementById('result')
     result.innerHTML = ''
-    rs.map((r) => {
+    _rs.map((r) => {
       let h3 = document.createElement('h3')
       h3.appendChild(document.createTextNode(r.id))
       result.appendChild(h3)
@@ -142,31 +151,34 @@
       span.appendChild(document.createTextNode(winning))
       result.appendChild(span)
     })
-
-    let mask = document.getElementById('mask')
-    mask.style.display = null;
   }
 
   function query() {
-    let ele = document.getElementById('uid')
-    ele.style.display = null
+    uid.style.display = null
 
-    let uids = ele.value.split(',')
-    uids = uids.map((uid) => uid.trim())
-
+    let uids = uid.value.split(',').map((_uid) => _uid.trim())
     localStorage.setItem('uid', uids.toString())
-  
+
     rs = search(uids, coupons)
     render(rs)
+    document.getElementById('mask').style.display = 'block'
   }
 
   function mask() {
-    let uid = document.getElementById('uid')
     uid.style.display = 'none'
     render(rs.map((r) => {
       r.id = r.id.replace(/[a-z\d]/gi, '*')
       return r
     }))
+  }
+
+  function clean() {
+    uid.value = ''
+    uid.style.display = null
+    localStorage.removeItem('uid')
+    rs = []
+    render(rs)
+    document.getElementById('mask').style.display = 'none'
   }
 </script>
 
