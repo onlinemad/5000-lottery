@@ -2,184 +2,283 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <title>振興五倍加碼券速查</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:image" content="https://onlinemad.github.io/5000-lottery/cover.webp" />
-  <style type="text/css">
-    body {
-      width: 25%;
-      margin: auto;
-    }
-
-    button {
-      width: 100%;
-      height: 25pt;
-    }
-
-    .main {
-      text-align: center;
-    }
-
-    .main small {
-      color: firebrick;
-    }
-
-    .main textarea {
-      width: 95%;
-      font-size: 20pt;
-    }
-
-    .result-title {
-      text-align: center;
-    }
-
-    .footer {
-      color: dimgrey;
-      text-align: center;
-      margin: 20pt auto;
-      line-height: 18pt;
-    }
-
-    #result {
-      margin-bottom: 20pt;
-    }
-
-    @media only screen and (max-device-width : 375px) {
-      body {
-        width: 95%;
-      }
-    }
-
-    @media only screen and (min-device-width : 375px) and (max-device-width : 667px) {
-      body {
-        width: 75%;
-      }
-    }
-  </style>
+    <meta charset="utf-8">
+    <title>振興五倍加碼券速查</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta property="og:image" content="https://onlinemad.github.io/5000-lottery/cover.webp" />
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style type="text/css">
+        body {
+            width: 25%;
+            margin: auto;
+        }
+        
+        h1 {
+            margin: 0 auto;
+        }
+        
+        button {
+            width: 20%;
+            height: 20%;
+        }
+        
+        .main {
+            text-align: center;
+        }
+        
+        .main small {
+            color: firebrick;
+        }
+        
+        .main table {
+            width: 100%;
+        }
+        
+        .result-title {
+            text-align: center;
+        }
+        
+        .footer {
+            color: dimgrey;
+            text-align: center;
+            margin: 20pt auto;
+            line-height: 18pt;
+        }
+        
+        #result {
+            margin-bottom: 20pt;
+        }
+        
+        @media only screen and (max-device-width: 375px) {
+            body {
+                width: 95%;
+            }
+        }
+        
+        @media only screen and (min-device-width: 375px) and (max-device-width: 667px) {
+            body {
+                width: 75%;
+            }
+        }
+    </style>
 </head>
 
 <body onload="loadUid()">
-  <div class="main">
-    <h1>振興五倍加碼券速查</h1>
-    <p><small>非官方，加碼券說明請看<a href="https://5000.gov.tw/" target="_blank">振興五倍券官網</a></small></p>
-    <div>
-      <textarea id="uid" rows="5" placeholder="請輸入身分證字號（至少輸入末三碼），用 , 分開多筆"></textarea>
-      <button onclick="query()">查詢</button>
+    <div class="main">
+        <div class="mt-5 mb-3">
+            <h1>振興五倍加碼券速查</h1>
+            <p><small class="text-danger text-center">非官方，加碼券說明請看<a href="https://vhpi.5000.gov.tw/" target="_blank">振興五倍券官網</a></small></p>
+        </div>
+        <div>
+            <!-- 輸入身分字號，未滿 10 個字會出現警告，滿 10 個字則送出查詢結果並將文字框清空 (按 Enter 也可以直接查詢) -->
+            <form>
+                <div class="form-group" style="text-align:left">
+                    <label for="idNumber">請輸入身分證字號</label>
+                    <input type="text" class="form-control" id="idNumber" aria-describedby="enterIdNumber" placeholder="請輸入身分證字號（第一個英文請大寫）">
+                    <small id="idValidate" class="text-danger" style="display: none">身分證長度或格式不對</small>
+                    <small id="emailHelp" class="form-text text-left">身分證字號僅供查詢之用，不會用做其他用途</small>
+                </div>
+                <button id="submit" type="submit" class="btn btn-primary col-sm-3" style="margin-top: 10px;" onclick="query()">查詢</button>
+            </form>
+        </div>
+        <div style="text-align:left">
+            <h2 class="result-title mt-5">查詢結果</h2>
+            <!-- 對獎結果表格 -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">身分證字號</th>
+                        <th scope="col">第一週</th>
+                        <th scope="col">第二週</th>
+                        <th scope="col">第三週</th>
+                        <th scope="col">第四週</th>
+                    </tr>
+                </thead>
+                <tbody id="result">
+                </tbody>
+            </table>
+            <div style="text-align: right">
+                <button class="btn btn-danger" onclick="clean()">清除結果</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <div>
-    <h2 class="result-title">查詢結果</h2>
-    <div id="result">
-    </div>
-    <div id="mask" style="display: none;">
-      <button onclick="mask()">碼掉身分證字號 for 截圖分享</button>
-    </div>
-  </div>
-  <div class="footer">
-    <small>
+    <div class="footer">
+        <small>
       無廣告、無追蹤碼<br />
-      身分證字號暫存在瀏覽器內，你也可以<a href="#" onclick="clean()">清除暫存</a> <br />
       網站以<a href="https://github.com/onlinemad/5000-lottery" target="_blank">開放原始碼方式釋出</a>
     </small>
-  </div>
+    </div>
 </body>
 <script>
-  let coupons = [{
-    name: '國旅券',
-    codes: ['21', '32', '98', '67', '97', '410']
-  }, {
-    name: 'i原券',
-    codes: ['64', '85']
-  }, {
-    name: '農遊券',
-    codes: ['89', '32', '54', '597', '453', '152']
-  }, {
-    name: '藝fun券(數位)',
-    codes: ['96', '15', '07', '30', '73', '98', '19', '11']
-  }, {
-    name: '藝fun券(紙本)',
-    codes: ['39', '37', '23', '36', '79', '08', '14', '75']
-  }, {
-    name: '動滋券',
-    codes: ['97', '13', '19', '55', '71', '93', '381', '734', '644', '453', '985']
-  }, {
-    name: '客庄劵2.0',
-    codes: ['81', '900']
-  }, {
-    name: '地方創生券',
-    codes: ['081', '105', '594', '188', '089', '396', '521', '467', '912', '798', '358', '441', '367', '941', '335']
-  }]
+    /* 阻止表單中按鈕點擊觸發「刷新頁面功能」。*/
+    document.getElementById("submit").addEventListener("click", function(event) {
+        event.preventDefault();
+    });
 
-  let rs = []
+    /* 陣列依序為 週次 > 優惠券種類 > 優惠券中獎號碼，其中「優惠券種類」的順序可以直接對應到下方「優惠券相關資訊 (info)」的順序。 */
+    let coupons_week = [
+        [
+            ['21', '32', '98', '67', '97', '410'],
+            ['64', '85'],
+            ['89', '32', '54', '597', '453', '152'],
+            ['96', '15', '07', '30', '73', '98', '19', '11'],
+            ['39', '37', '23', '36', '79', '08', '14', '75'],
+            ['97', '13', '19', '55', '71', '93', '381', '734', '644', '453', '985'],
+            ['81', '900'],
+            ['081', '105', '594', '188', '089', '396', '521', '467', '912', '798', '358', '441', '367', '941', '335']
+        ],
+        [],
+        [],
+        []
+    ];
 
-  let search = (ids, coupons) => {
-    let _rs = ids.map((id) => {
-      let winning = []
-      coupons.map((coupon) => {
-        coupon.codes.map((code) => {
-          if (id.slice(-code.length) === code) {
-            winning.push(`${coupon.name}[${code}]`)
-          }
-        })
-      })
-      return {
-        id: id,
-        winning: winning
-      }
-    })
-    return _rs
-  }
+    /* 優惠券相關資訊 (info)。 */
+    let info = [{
+        name: '國旅券',
+        src: 'https://1000.taiwan.net.tw/',
+        value: 1000,
+    }, {
+        name: 'i原券',
+        src: 'https://explorethesun.tw/cipshop/',
+        value: 1000,
+    }, {
+        name: '農遊券',
+        src: 'https://888.coa.gov.tw/',
+        value: 888,
+    }, {
+        name: '藝fun券(數位)',
+        src: 'https://artsfunnext.moc.gov.tw/home/index.html',
+        value: 600,
+    }, {
+        name: '藝fun券(紙本)',
+        src: 'https://artsfunnext.moc.gov.tw/home/index.html',
+        value: 600,
+    }, {
+        name: '動滋券',
+        src: 'https://500.gov.tw/',
+        value: 500,
+    }, {
+        name: '客庄劵2.0',
+        src: 'https://www.hakka500.tw/',
+        value: 500,
+    }, {
+        name: '地方創生券',
+        src: 'https://www.twrr.ndc.gov.tw/index',
+        value: 500,
+    }, ];
 
-  let uid = null
+    let rs = []; // 所有查詢結果，使用 clean 函式可以重置。
 
-  function loadUid() {
-    uid = document.getElementById('uid')
-    uid.value = localStorage.getItem('uid')
-  }
+    let search = (id) => {
+        /*
+          用身分證字號後兩~三碼對獎，若優惠券「週次」為空陣列，則印出「Comming Soon!」；若沒中獎，則印出「再接再厲💪」；若中獎，則印出「超連結券名(面額)[中獎號碼]」。
+        */
+        let results = [];
 
-  function render(_rs) {
-    let result = document.getElementById('result')
-    result.innerHTML = ''
-    _rs.map((r) => {
-      let h3 = document.createElement('h3')
-      h3.appendChild(document.createTextNode(r.id))
-      result.appendChild(h3)
+        coupons_week.forEach((coupons) => {
+            let isWon = false;
 
-      let span = document.createElement('span')
-      let winning = r.winning.length > 0 ? `中：${r.winning.join(', ')}` : '都沒中'
-      span.appendChild(document.createTextNode(winning))
-      result.appendChild(span)
-    })
-  }
+            if (coupons.length == 0) {
+                results.push(`<p class="text-danger">Comming Soon!</p>`);
+                isWon = true;
+            };
 
-  function query() {
-    uid.style.display = null
+            coupons.forEach((coupon, index) => {
+                coupon.forEach((code) => {
+                    if (id.slice(-code.length) === code) {
+                        results.push(`<a href=${info[index].src} target="_blank">${info[index].name}</a>(${info[index].value}元)[${code}]`);
+                        isWon = true;
+                    };
+                });
+            });
 
-    let uids = uid.value.split(',').map((_uid) => _uid.trim())
-    localStorage.setItem('uid', uids.toString())
 
-    rs = search(uids, coupons)
-    render(rs)
-    document.getElementById('mask').style.display = 'block'
-  }
+            if (!isWon) {
+                results.push(`<p class="text-danger">再接再厲💪</p>`);
+            };
+        });
 
-  function mask() {
-    uid.style.display = 'none'
-    render(rs.map((r) => {
-      r.id = r.id.replace(/[a-z\d]/gi, '*')
-      return r
-    }))
-  }
+        id = id.slice(0, 3) + '****' + id.slice(7, 10)
 
-  function clean() {
-    uid.value = ''
-    uid.style.display = null
-    localStorage.removeItem('uid')
-    rs = []
-    render(rs)
-    document.getElementById('mask').style.display = 'none'
-  }
+        return {
+            id: id,
+            results: results
+        };
+    };
+
+    let uid = null;
+    let result = null;
+
+    function loadUid() {
+        /*
+            預先載入會多次使用的選擇器。「idNumber」對應到身分證字號輸入框，「result」對應到查詢結果表格。
+        */
+        uid = document.getElementById('idNumber');
+        uid.value = localStorage.getItem('idNumber');
+        result = document.getElementById('result');
+    };
+
+
+    function render(_rs) {
+        /*
+            渲染查詢結果，「th」內放身分證字號，「td」內放對獎結果。
+        */
+        let tr = document.createElement('tr');
+        let th = document.createElement('th');
+        th.scope = 'row';
+        th.appendChild(document.createTextNode(_rs.id));
+        tr.appendChild(th);
+
+        _rs.results.forEach((r) => {
+            let td = document.createElement('td');
+            td.innerHTML = r;
+            tr.appendChild(td);
+        });
+
+        result.appendChild(tr);
+    }
+
+    function query() {
+        /*
+            取得輸入框內身分證字號，並在所有查詢結果(rs陣列)中插入對獎結果，渲染在查詢結果表格中，最後清空輸入框內身分證字號。
+        */
+        uid.style.display = null;
+
+        let _uid = uid.value.trim(); // 去除身分證字號前後多於空白
+        let idValidate = document.getElementById('idValidate');
+
+        if (_uid.length != 10) {
+            idValidate.style.display = 'block';
+            return;
+        }
+
+        idValidate.style.display = 'none';
+
+        let win_list = search(_uid);
+        rs.push(win_list);
+        render(win_list);
+        uid.value = '';
+    }
+
+    function mask() {
+        /*
+            Version 1 用來碼掉身分證字號，但比較常用做法為查詢結果直接將身分證字號中間四碼用「*」代替。
+        */
+        render(rs.map((r) => {
+            r.id = r.id.replace(/[a-z\d]/gi, '*')
+            alert(r.id)
+            return r
+        }))
+    }
+
+    function clean() {
+        /*
+            重置「所有查詢結果 (rs)」陣列並將「查詢結果表格」清空。
+        */
+        rs = [];
+        result.innerHTML = '';
+    }
 </script>
 
 </html>
