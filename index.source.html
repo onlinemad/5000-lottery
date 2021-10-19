@@ -21,7 +21,7 @@
       text-align: center;
     }
 
-    .main small {
+    .main .notice {
       color: firebrick;
     }
 
@@ -45,6 +45,14 @@
       margin-bottom: 20pt;
     }
 
+    #result li {
+      list-style: none;
+    }
+
+    #result li::before {
+      content: '🀄'
+    }
+
     @media only screen and (max-device-width : 375px) {
       body {
         width: 95%;
@@ -62,7 +70,10 @@
 <body onload="loadUid()">
   <div class="main">
     <h1>振興五倍加碼券速查</h1>
-    <p><small>非官方，加碼券說明請看<a href="https://5000.gov.tw/" target="_blank">振興五倍券官網</a></small></p>
+    <p>
+      <small>新增【第二週】國旅券</small><br/>
+      <small class="notice">非官方，加碼券說明請看<a href="https://5000.gov.tw/" target="_blank">振興五倍券官網</a></small>
+    </p>
     <div>
       <textarea id="uid" rows="5" placeholder="請輸入身分證字號（至少輸入末三碼），用 , 分開多筆"></textarea>
       <button onclick="query()">查詢</button>
@@ -86,29 +97,32 @@
 </body>
 <script>
   let coupons = [{
-    name: '國旅券',
+    name: '【第一週】國旅券',
     codes: ['21', '32', '98', '67', '97', '410']
   }, {
-    name: 'i原券',
+    name: '【第一週】i原券',
     codes: ['64', '85']
   }, {
-    name: '農遊券',
+    name: '【第一週】農遊券',
     codes: ['89', '32', '54', '597', '453', '152']
   }, {
-    name: '藝fun券(數位)',
+    name: '【第一週】藝fun券(數位)',
     codes: ['96', '15', '07', '30', '73', '98', '19', '11']
   }, {
-    name: '藝fun券(紙本)',
+    name: '【第一週】藝fun券(紙本)',
     codes: ['39', '37', '23', '36', '79', '08', '14', '75']
   }, {
-    name: '動滋券',
+    name: '【第一週】動滋券',
     codes: ['97', '13', '19', '55', '71', '93', '381', '734', '644', '453', '985']
   }, {
-    name: '客庄劵2.0',
+    name: '【第一週】客庄劵2.0',
     codes: ['81', '900']
   }, {
-    name: '地方創生券',
+    name: '【第一週】地方創生券',
     codes: ['081', '105', '594', '188', '089', '396', '521', '467', '912', '798', '358', '441', '367', '941', '335']
+  }, {
+    name: '【第二週】國旅券',
+    codes: ['87', '04', '40', '29', '71']
   }]
 
   let rs = []
@@ -119,7 +133,7 @@
       coupons.map((coupon) => {
         coupon.codes.map((code) => {
           if (id.slice(-code.length) === code) {
-            winning.push(`${coupon.name}[${code}]`)
+            winning.push(`${coupon.name} [${code}]`)
           }
         })
       })
@@ -147,9 +161,18 @@
       result.appendChild(h3)
 
       let span = document.createElement('span')
-      let winning = r.winning.length > 0 ? `中：${r.winning.join(', ')}` : '都沒中'
-      span.appendChild(document.createTextNode(winning))
-      result.appendChild(span)
+      if (r.winning.length > 0) {
+        let ul = document.createElement('ul')
+        r.winning.map((w) => {
+          let li = document.createElement('li')
+          li.appendChild(document.createTextNode(w))
+          ul.appendChild(li)
+        })
+        result.appendChild(ul)
+      } else {
+        span.appendChild(document.createTextNode('都沒中'))
+        result.appendChild(span)
+      }
     })
   }
 
